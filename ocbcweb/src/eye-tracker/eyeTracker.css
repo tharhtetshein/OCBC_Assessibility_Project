@@ -1,0 +1,659 @@
+:root {
+  --eye-primary: #e31837;
+  --eye-primary-dark: #c41230;
+  --eye-success: #4CAF50;
+  --eye-success-dark: #45a049;
+  --eye-bg-dark: rgba(20, 20, 20, 0.95);
+  --eye-error: #f44336;
+  --eye-shadow: rgba(0, 0, 0, 0.4);
+  --eye-glow: rgba(227, 24, 55, 0.6);
+  
+  /* Responsive sizing variables */
+  --cursor-size: 80px;
+  --cursor-dot-size: 16px;
+  --camera-width: 160px;
+  --camera-height: 120px;
+  --btn-padding: 10px 18px;
+  --btn-font-size: 13px;
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  :root {
+    --cursor-size: 100px;
+    --cursor-dot-size: 18px;
+    --camera-width: 180px;
+    --camera-height: 135px;
+    --btn-padding: 11px 20px;
+    --btn-font-size: 13px;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  :root {
+    --cursor-size: 120px;
+    --cursor-dot-size: 20px;
+    --camera-width: 200px;
+    --camera-height: 150px;
+    --btn-padding: 12px 24px;
+    --btn-font-size: 14px;
+  }
+}
+
+/* ============================================
+   Eye Tracker Container
+   ============================================ */
+.eye-tracker-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 999995;
+}
+
+/* ============================================
+   Gaze Cursor & Animations
+   ============================================ */
+.gaze-cursor {
+  position: fixed;
+  width: var(--cursor-size);
+  height: var(--cursor-size);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 999996;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gaze-cursor-dot {
+  position: absolute;
+  width: var(--cursor-dot-size);
+  height: var(--cursor-dot-size);
+  background: radial-gradient(circle, var(--eye-primary) 0%, var(--eye-primary-dark) 100%);
+  border-radius: 50%;
+  box-shadow: 0 0 15px var(--eye-glow);
+}
+
+@media (min-width: 768px) {
+  .gaze-cursor-dot {
+    box-shadow: 0 0 20px var(--eye-glow);
+  }
+}
+
+.progress-ring {
+  position: absolute;
+  transform: rotate(-90deg);
+}
+
+.progress-ring-bg {
+  opacity: 0.3;
+}
+
+.progress-ring-fill {
+  transition: stroke-dashoffset 0.1s ease;
+}
+
+/* Gaze hover effect for interactive elements */
+.gaze-hovered {
+  outline: 3px solid var(--eye-primary) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 15px var(--eye-glow) !important;
+  transition: all 0.2s ease !important;
+}
+
+@media (min-width: 768px) {
+  .gaze-hovered {
+    outline: 4px solid var(--eye-primary) !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 18px var(--eye-glow) !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gaze-hovered {
+    outline: 5px solid var(--eye-primary) !important;
+    box-shadow: 0 0 20px var(--eye-glow) !important;
+  }
+}
+
+.gaze-clicked {
+  outline: 4px solid var(--eye-success) !important;
+  background-color: rgba(76, 175, 80, 0.3) !important;
+  animation: click-flash 0.4s ease !important;
+}
+
+@media (min-width: 1024px) {
+  .gaze-clicked {
+    outline: 5px solid var(--eye-success) !important;
+  }
+}
+
+@keyframes click-flash {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* ============================================
+   Floating Draggable UI (Global Mode)
+   ============================================ */
+.eye-tracker-camera-fixed {
+  position: fixed;
+  background: var(--eye-bg-dark);
+  border-radius: 12px;
+  box-shadow: 0 6px 24px var(--eye-shadow);
+  z-index: 999994;
+  pointer-events: auto;
+  cursor: grab;
+  user-select: none;
+  overflow: hidden;
+  border: 2px solid rgba(227, 24, 55, 0.3);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  
+  /* Mobile: smaller and positioned at bottom */
+  max-width: calc(100vw - 20px);
+}
+
+@media (min-width: 768px) {
+  .eye-tracker-camera-fixed {
+    border-radius: 15px;
+    box-shadow: 0 8px 32px var(--eye-shadow);
+  }
+}
+
+.eye-tracker-camera-fixed:hover {
+  border-color: rgba(227, 24, 55, 0.6);
+  box-shadow: 0 8px 32px rgba(227, 24, 55, 0.2);
+}
+
+.eye-tracker-camera-fixed.dragging {
+  cursor: grabbing;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  border-color: var(--eye-primary);
+}
+
+.camera-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: linear-gradient(135deg, var(--eye-primary), var(--eye-primary-dark));
+  color: white;
+  gap: 8px;
+}
+
+@media (min-width: 768px) {
+  .camera-header {
+    padding: 8px 12px;
+  }
+}
+
+.camera-drag-hint {
+  font-size: 12px;
+  opacity: 0.7;
+  letter-spacing: 1px;
+}
+
+@media (min-width: 768px) {
+  .camera-drag-hint {
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+}
+
+.camera-title {
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 768px) {
+  .camera-title {
+    font-size: 12px;
+  }
+}
+
+.camera-stop-btn {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  /* Larger touch target for mobile */
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 768px) {
+  .camera-stop-btn {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+  }
+}
+
+.camera-stop-btn:hover,
+.camera-stop-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.eye-tracker-camera-fixed .camera-feed {
+  width: var(--camera-width);
+  height: var(--camera-height);
+  object-fit: cover;
+  display: block;
+}
+
+.eye-tracker-camera-fixed .feed-status {
+  text-align: center;
+  color: var(--eye-success);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 5px 8px;
+  background: rgba(76, 175, 80, 0.15);
+}
+
+@media (min-width: 768px) {
+  .eye-tracker-camera-fixed .feed-status {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+}
+
+/* ============================================
+   Connection Error
+   ============================================ */
+.eye-tracker-connection-error {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  left: 10px;
+  background: rgba(244, 67, 54, 0.9);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
+  z-index: 999994;
+  pointer-events: auto;
+  animation: pulse-error 2s infinite;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .eye-tracker-connection-error {
+    top: 20px;
+    right: 20px;
+    left: auto;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+}
+
+@keyframes pulse-error {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* ============================================
+   Embedded/Docked UI (Dashboard Mode)
+   ============================================ */
+.eye-tracker-container.docked {
+  position: static;
+  bottom: auto;
+  left: auto;
+  z-index: auto;
+  pointer-events: auto;
+}
+
+.eye-tracker-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .eye-tracker-panel {
+    gap: 10px;
+  }
+}
+
+.eye-tracker-panel.compact {
+  width: 100%;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.eye-tracker-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .eye-tracker-controls {
+    gap: 10px;
+  }
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.eye-tracker-btn {
+  padding: var(--btn-padding);
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: var(--btn-font-size);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  /* Touch-friendly */
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 768px) {
+  .eye-tracker-btn {
+    border-radius: 25px;
+    min-height: auto;
+  }
+}
+
+.eye-tracker-btn:focus-visible {
+  outline: 3px solid #1a73e8;
+  outline-offset: 3px;
+}
+
+.eye-tracker-panel.compact .eye-tracker-btn {
+  width: 100%;
+  min-height: 70px;
+  height: 100%;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+@media (min-width: 768px) {
+  .eye-tracker-panel.compact .eye-tracker-btn {
+    min-height: 80px;
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-size: 14px;
+    gap: 12px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .eye-tracker-panel.compact .eye-tracker-btn {
+    min-height: 88px;
+    border-radius: 16px;
+  }
+}
+
+.eye-tracker-compact-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+@media (min-width: 768px) {
+  .eye-tracker-compact-content {
+    gap: 12px;
+  }
+}
+
+.eye-tracker-compact-icon {
+  font-size: 20px;
+}
+
+@media (min-width: 768px) {
+  .eye-tracker-compact-icon {
+    font-size: 24px;
+  }
+}
+
+.eye-tracker-compact-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.eye-tracker-compact-title {
+  font-weight: 700;
+  color: #1a1a1a;
+  font-size: 13px;
+}
+
+@media (min-width: 768px) {
+  .eye-tracker-compact-title {
+    font-size: 14px;
+  }
+}
+
+.eye-tracker-compact-subtitle {
+  font-size: 11px;
+  color: #666;
+  font-weight: 500;
+}
+
+@media (min-width: 768px) {
+  .eye-tracker-compact-subtitle {
+    font-size: 12px;
+  }
+}
+
+.start-btn {
+  background: linear-gradient(135deg, var(--eye-primary), var(--eye-primary-dark));
+  color: white;
+}
+
+.eye-tracker-panel.compact .start-btn,
+.eye-tracker-panel.compact .stop-btn {
+  background: #ffffff;
+  color: #1a1a1a;
+  border: 1px solid #e5e7eb;
+}
+
+.eye-tracker-panel.compact .start-btn:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  border-color: #e5e7eb;
+  cursor: not-allowed;
+}
+
+.eye-tracker-panel.compact .start-btn:hover:not(:disabled),
+.eye-tracker-panel.compact .stop-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.start-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.start-btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.stop-btn {
+  background: linear-gradient(135deg, #666, #444);
+  color: white;
+}
+
+.connection-status.error {
+  background: #ff5252;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 11px;
+}
+
+@media (min-width: 768px) {
+  .connection-status.error {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+  }
+}
+
+.eye-tracker-panel.compact .connection-status.error {
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 11px;
+}
+
+/* ============================================
+   Embedded Camera Feed (Dashboard)
+   ============================================ */
+.camera-feed-container {
+  margin-top: 8px;
+  background: #000;
+  padding: 4px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 220px;
+}
+
+@media (min-width: 768px) {
+  .camera-feed-container {
+    margin-top: 10px;
+    padding: 5px;
+    border-radius: 12px;
+  }
+}
+
+.camera-feed {
+  width: 100%;
+  max-width: 200px;
+  border-radius: 6px;
+  border: 2px solid #00ff00;
+  transform: scaleX(-1);
+}
+
+@media (min-width: 768px) {
+  .camera-feed {
+    border-radius: 8px;
+  }
+}
+
+.feed-status {
+  color: #00ff00;
+  font-size: 9px;
+  text-align: center;
+  margin-top: 4px;
+}
+
+@media (min-width: 768px) {
+  .feed-status {
+    font-size: 10px;
+    margin-top: 5px;
+  }
+}
+
+.gaze-instructions {
+  background: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-top: 8px;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .gaze-instructions {
+    padding: 12px 16px;
+    border-radius: 12px;
+    margin-top: 10px;
+  }
+}
+
+.instruction-main {
+  font-weight: bold;
+  color: var(--eye-success);
+  font-size: 13px;
+}
+
+@media (min-width: 768px) {
+  .instruction-main {
+    font-size: 14px;
+  }
+}
+
+.instruction-sub {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
+@media (min-width: 768px) {
+  .instruction-sub {
+    font-size: 11px;
+  }
+}
+
+/* ============================================
+   Extra Small Devices (< 375px)
+   ============================================ */
+@media (max-width: 374px) {
+  :root {
+    --cursor-size: 60px;
+    --cursor-dot-size: 12px;
+    --camera-width: 140px;
+    --camera-height: 105px;
+  }
+  
+  .camera-title {
+    font-size: 10px;
+  }
+  
+  .eye-tracker-panel.compact .eye-tracker-btn {
+    min-height: 60px;
+    padding: 8px 10px;
+  }
+}
+
+/* ============================================
+   Landscape Mobile
+   ============================================ */
+@media (max-height: 500px) and (orientation: landscape) {
+  .eye-tracker-camera-fixed {
+    /* Position in corner for landscape */
+    max-width: 180px;
+  }
+  
+  .eye-tracker-camera-fixed .camera-feed {
+    width: 160px;
+    height: 120px;
+  }
+  
+  .gaze-cursor {
+    width: 70px;
+    height: 70px;
+  }
+}

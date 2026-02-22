@@ -1,0 +1,466 @@
+.fab-container {
+  position: fixed;
+  z-index: 999990;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  user-select: none;
+  touch-action: none;
+}
+
+/* Main FAB Button */
+.fab-main {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e31837, #c41230);
+  border: none;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(227, 24, 55, 0.4);
+  transition: all 0.3s ease;
+}
+
+.fab-main:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 25px rgba(227, 24, 55, 0.5);
+}
+
+.fab-main.dragging {
+  cursor: grabbing;
+  transform: scale(1.15);
+  box-shadow: 0 8px 30px rgba(227, 24, 55, 0.6);
+}
+
+.fab-icon {
+  font-size: 24px;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.fab-icon.rotated {
+  transform: rotate(90deg);
+}
+
+/* Drag Hint */
+.fab-hint {
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: #666;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.fab-container:hover .fab-hint {
+  opacity: 1;
+}
+
+.fab-container.expanded .fab-hint {
+  display: none;
+}
+
+/* Expanded Menu */
+.fab-menu {
+  position: absolute;
+  bottom: 70px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  min-width: 220px;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Menu Items */
+.fab-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 12px;
+  background: #f5f5f5;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  animation: fadeIn 0.3s ease forwards;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fab-menu-item:hover {
+  background: var(--item-color, #e31837);
+  transform: translateX(5px);
+}
+
+.fab-menu-item:hover .fab-menu-label {
+  color: white;
+}
+
+.fab-menu-item:hover .fab-menu-icon {
+  transform: scale(1.2);
+}
+
+.fab-menu-icon {
+  font-size: 24px;
+  transition: transform 0.2s ease;
+}
+
+.fab-menu-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  transition: color 0.2s ease;
+}
+
+/* Gaze hover effects */
+.fab-menu-item.gaze-hovered {
+  background: var(--item-color, #e31837) !important;
+  transform: translateX(5px) scale(1.05) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+.fab-menu-item.gaze-hovered .fab-menu-label {
+  color: white !important;
+}
+
+.fab-main.gaze-hovered {
+  transform: scale(1.2) !important;
+  box-shadow: 0 8px 30px rgba(227, 24, 55, 0.6) !important;
+}
+
+/* ============================================
+   VOICE HELP STYLES (Integrated)
+   ============================================ */
+
+/* Listening Overlay */
+.voice-listening-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  animation: fadeInOverlay 0.3s ease;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.listening-card {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 350px;
+  width: 90%;
+}
+
+.listening-indicator {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pulse-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid #e31837;
+  border-radius: 50%;
+  animation: pulse 1.5s ease-out infinite;
+}
+
+.pulse-ring.delay-1 {
+  animation-delay: 0.3s;
+}
+
+.pulse-ring.delay-2 {
+  animation-delay: 0.6s;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.listening-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.transcript-text {
+  font-size: 16px;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.cancel-listening {
+  background: #f5f5f5;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-listening:hover {
+  background: #e0e0e0;
+}
+
+.type-instead-button {
+  display: block;
+  margin: 15px auto 0;
+  background: none;
+  border: none;
+  color: #e31837;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Error Toast */
+.voice-error-toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #f44336;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 20px rgba(244, 67, 54, 0.4);
+  z-index: 999999;
+  animation: slideUpToast 0.3s ease;
+}
+
+@keyframes slideUpToast {
+  from {
+    transform: translate(-50%, 50px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+.voice-error-toast button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+/* Fallback Input Overlay */
+.voice-fallback-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+}
+
+.fallback-input-card {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.fallback-input-card h3 {
+  margin: 0 0 10px;
+  color: #333;
+  font-size: 20px;
+}
+
+.fallback-input-card p {
+  margin: 0 0 15px;
+  color: #666;
+}
+
+.fallback-input-card input {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 16px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.fallback-input-card input:focus {
+  outline: none;
+  border-color: #e31837;
+}
+
+.fallback-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.fallback-actions button {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fallback-actions button[type="button"] {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.fallback-actions button[type="button"]:hover {
+  background: #e0e0e0;
+}
+
+.fallback-actions button[type="submit"] {
+  background: linear-gradient(135deg, #e31837, #c41230);
+  color: white;
+}
+
+.fallback-actions button[type="submit"]:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.fallback-actions button[type="submit"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Processing Overlay */
+.voice-processing-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+}
+
+.processing-card {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.processing-card p {
+  margin-top: 20px;
+  color: #333;
+  font-weight: 600;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f0f0f0;
+  border-top-color: #e31837;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .fab-menu {
+    min-width: 200px;
+  }
+  
+  .fab-menu-item {
+    padding: 10px 14px;
+  }
+  
+  .fab-menu-label {
+    font-size: 13px;
+  }
+
+  .listening-card,
+  .fallback-input-card {
+    padding: 25px;
+  }
+}

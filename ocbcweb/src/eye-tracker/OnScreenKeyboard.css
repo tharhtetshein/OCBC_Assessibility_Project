@@ -1,0 +1,563 @@
+/* ============================================
+   ON-SCREEN KEYBOARD - RESPONSIVE CSS
+   Mobile layout fits entirely on screen
+   ============================================ */
+
+:root {
+  --osk-bg: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+  --osk-key-bg: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+  --osk-key-hover: linear-gradient(145deg, #4a4a4a, #3a3a3a);
+  --osk-success: #4CAF50;
+  --osk-success-dark: #45a049;
+  --osk-eye-primary: #e31837;
+  --osk-eye-dark: #c41230;
+  --osk-hand-primary: #2196F3;
+  --osk-hand-dark: #1976D2;
+  --osk-danger: #ff6b6b;
+  --osk-danger-dark: #ee5a5a;
+}
+
+/* ============================================
+   Keyboard Overlay
+   ============================================ */
+.osk-overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 999990;
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  pointer-events: auto;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+}
+
+/* ============================================
+   MOBILE CONTAINER - Fits on screen
+   ============================================ */
+.osk-container.osk-mobile {
+  background: var(--osk-bg);
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ============================================
+   MOBILE HEADER - Compact
+   ============================================ */
+.osk-mobile .osk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  padding: 0 4px;
+}
+
+.osk-mobile .osk-title {
+  color: var(--osk-success);
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.osk-mobile .osk-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.osk-mobile .osk-close-btn,
+.osk-mobile .osk-clear-btn {
+  background: var(--osk-eye-primary);
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.osk-mobile .osk-clear-btn {
+  background: var(--osk-danger);
+}
+
+/* ============================================
+   MOBILE PREVIEW - Compact
+   ============================================ */
+.osk-mobile .osk-preview {
+  background: #000;
+  border: 2px solid var(--osk-success);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+}
+
+.osk-mobile .osk-preview-content {
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+}
+
+.osk-mobile .osk-preview-text {
+  color: #fff;
+  font-size: 16px;
+  word-break: break-all;
+}
+
+.osk-mobile .osk-preview-placeholder {
+  color: #666;
+  font-style: italic;
+}
+
+.osk-mobile .osk-preview-cursor {
+  color: var(--osk-success);
+  font-weight: bold;
+  animation: blink-cursor 1s infinite;
+}
+
+@keyframes blink-cursor {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* ============================================
+   MOBILE KEYBOARD - Phone style layout
+   Keys sized to fit 10 per row
+   ============================================ */
+.osk-keyboard-mobile {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.osk-keyboard-mobile .osk-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* Regular keys - calculated to fit 10 in a row */
+.osk-keyboard-mobile .osk-key {
+  /* Width = (100% - gaps) / 10 */
+  /* 9 gaps * 4px = 36px, so (100% - 36px) / 10 */
+  flex: 0 0 calc((100% - 36px) / 10);
+  max-width: calc((100% - 36px) / 10);
+  height: 42px;
+  border: none;
+  border-radius: 6px;
+  background: var(--osk-key-bg);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Modifier keys (Shift, Backspace, 123, Enter) */
+.osk-keyboard-mobile .osk-key-modifier {
+  flex: 0 0 calc((100% - 32px) / 9 * 1.3);
+  max-width: calc((100% - 32px) / 9 * 1.3);
+  font-size: 18px;
+  background: linear-gradient(145deg, #4a4a4a, #3a3a3a);
+}
+
+/* Space bar */
+.osk-keyboard-mobile .osk-key-space {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 14px;
+  text-transform: lowercase;
+}
+
+/* Comma and period keys */
+.osk-keyboard-mobile .osk-key-comma {
+  flex: 0 0 calc((100% - 20px) / 10);
+  max-width: calc((100% - 20px) / 10);
+}
+
+/* Enter key */
+.osk-keyboard-mobile .osk-key-enter {
+  background: linear-gradient(145deg, var(--osk-success), var(--osk-success-dark));
+}
+
+/* Bottom row specific layout */
+.osk-keyboard-mobile .osk-row-bottom {
+  gap: 4px;
+}
+
+.osk-keyboard-mobile .osk-row-bottom .osk-key-modifier {
+  flex: 0 0 50px;
+  max-width: 50px;
+}
+
+/* Active state */
+.osk-keyboard-mobile .osk-key-active {
+  background: linear-gradient(145deg, var(--osk-success), var(--osk-success-dark)) !important;
+}
+
+/* ============================================
+   MOBILE HOVER EFFECTS - Eye Tracker (Red)
+   ============================================ */
+.osk-keyboard-mobile .osk-key.gaze-hovered {
+  background: linear-gradient(145deg, var(--osk-eye-primary), var(--osk-eye-dark)) !important;
+  transform: scale(1.15) !important;
+  box-shadow: 0 0 15px rgba(227, 24, 55, 0.7) !important;
+  outline: 2px solid #fff !important;
+  z-index: 10 !important;
+}
+
+.osk-keyboard-mobile .osk-key.gaze-clicked {
+  background: linear-gradient(145deg, var(--osk-success), var(--osk-success-dark)) !important;
+  transform: scale(0.95) !important;
+}
+
+.osk-mobile .osk-close-btn.gaze-hovered,
+.osk-mobile .osk-clear-btn.gaze-hovered {
+  transform: scale(1.15) !important;
+  box-shadow: 0 0 15px rgba(227, 24, 55, 0.8) !important;
+}
+
+/* ============================================
+   MOBILE HOVER EFFECTS - Hand Tracker (Blue)
+   ============================================ */
+.osk-keyboard-mobile .osk-key.hand-hovered {
+  background: linear-gradient(145deg, var(--osk-hand-primary), var(--osk-hand-dark)) !important;
+  transform: scale(1.15) !important;
+  box-shadow: 0 0 15px rgba(33, 150, 243, 0.7) !important;
+  outline: 2px solid #fff !important;
+  z-index: 10 !important;
+}
+
+.osk-keyboard-mobile .osk-key.hand-clicked {
+  background: linear-gradient(145deg, var(--osk-success), var(--osk-success-dark)) !important;
+  transform: scale(0.95) !important;
+}
+
+.osk-mobile .osk-close-btn.hand-hovered,
+.osk-mobile .osk-clear-btn.hand-hovered {
+  transform: scale(1.15) !important;
+  box-shadow: 0 0 15px rgba(33, 150, 243, 0.8) !important;
+}
+
+/* ============================================
+   EXTRA SMALL SCREENS (< 360px)
+   ============================================ */
+@media (max-width: 359px) {
+  .osk-keyboard-mobile .osk-key {
+    height: 36px;
+    font-size: 14px;
+    border-radius: 5px;
+  }
+  
+  .osk-keyboard-mobile .osk-key-modifier {
+    font-size: 16px;
+  }
+  
+  .osk-keyboard-mobile {
+    gap: 4px;
+  }
+  
+  .osk-keyboard-mobile .osk-row {
+    gap: 3px;
+  }
+  
+  .osk-mobile .osk-preview {
+    padding: 6px 10px;
+    margin-bottom: 6px;
+  }
+  
+  .osk-mobile .osk-preview-text {
+    font-size: 14px;
+  }
+}
+
+/* ============================================
+   LANDSCAPE MOBILE
+   ============================================ */
+@media (max-height: 450px) and (orientation: landscape) {
+  .osk-keyboard-mobile .osk-key {
+    height: 36px;
+    font-size: 14px;
+  }
+  
+  .osk-keyboard-mobile {
+    gap: 4px;
+  }
+  
+  .osk-mobile .osk-preview {
+    padding: 4px 10px;
+    margin-bottom: 4px;
+  }
+  
+  .osk-mobile .osk-header {
+    margin-bottom: 4px;
+  }
+}
+
+/* ============================================
+   ============================================
+   DESKTOP STYLES (768px+)
+   ============================================
+   ============================================ */
+@media (min-width: 768px) {
+  .osk-overlay {
+    padding: 10px;
+  }
+  
+  .osk-container {
+    background: var(--osk-bg);
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.5);
+    max-width: 900px;
+    width: 100%;
+  }
+  
+  /* Desktop Header */
+  .osk-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 0 10px;
+  }
+  
+  .osk-title {
+    color: var(--osk-success);
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  .osk-close-btn {
+    background: var(--osk-eye-primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
+  .osk-close-btn:hover {
+    background: #ff4757;
+    transform: scale(1.05);
+  }
+  
+  /* Desktop Preview */
+  .osk-preview {
+    background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+    border: 2px solid var(--osk-success);
+    border-radius: 15px;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .osk-preview-label {
+    color: var(--osk-success);
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    background: rgba(76, 175, 80, 0.2);
+    border-radius: 8px;
+    min-width: 100px;
+    text-align: center;
+  }
+  
+  .osk-preview-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: #000;
+    border-radius: 10px;
+    padding: 12px 15px;
+    min-height: 50px;
+  }
+  
+  .osk-preview-text {
+    color: #fff;
+    font-size: 18px;
+    word-break: break-all;
+  }
+  
+  .osk-preview-placeholder {
+    color: #666;
+    font-style: italic;
+  }
+  
+  .osk-preview-cursor {
+    color: var(--osk-success);
+    font-size: 20px;
+    font-weight: bold;
+    animation: blink-cursor 1s infinite;
+    margin-left: 2px;
+  }
+  
+  .osk-clear-btn {
+    background: linear-gradient(145deg, var(--osk-danger), var(--osk-danger-dark));
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  
+  .osk-clear-btn:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Desktop Keyboard */
+  .osk-keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .osk-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+  }
+  
+  .osk-key {
+    min-width: 55px;
+    height: 55px;
+    border: none;
+    border-radius: 10px;
+    background: var(--osk-key-bg);
+    color: white;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .osk-key:hover {
+    background: var(--osk-key-hover);
+    transform: translateY(-2px);
+  }
+  
+  .osk-key-wide {
+    min-width: 85px;
+    font-size: 13px;
+  }
+  
+  .osk-key-space {
+    min-width: 350px;
+    font-size: 16px;
+  }
+  
+  .osk-key-active {
+    background: linear-gradient(145deg, var(--osk-success), var(--osk-success-dark)) !important;
+  }
+  
+  /* Desktop Hover - Eye Tracker */
+  .osk-key.gaze-hovered {
+    background: linear-gradient(145deg, var(--osk-eye-primary), var(--osk-eye-dark)) !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 8px 20px rgba(227, 24, 55, 0.5), 0 0 20px rgba(227, 24, 55, 0.6) !important;
+    outline: 3px solid #fff !important;
+    z-index: 10 !important;
+  }
+  
+  .osk-key.gaze-clicked {
+    background: linear-gradient(145deg, var(--osk-success), var(--osk-success-dark)) !important;
+    transform: scale(0.95) !important;
+  }
+  
+  .osk-close-btn.gaze-hovered,
+  .osk-clear-btn.gaze-hovered {
+    transform: scale(1.1) !important;
+    box-shadow: 0 0 20px rgba(227, 24, 55, 0.8) !important;
+    outline: 3px solid #fff !important;
+  }
+  
+  /* Desktop Hover - Hand Tracker */
+  .osk-key.hand-hovered {
+    background: linear-gradient(145deg, var(--osk-hand-primary), var(--osk-hand-dark)) !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 8px 20px rgba(33, 150, 243, 0.5), 0 0 20px rgba(33, 150, 243, 0.6) !important;
+    outline: 3px solid #fff !important;
+    z-index: 10 !important;
+  }
+  
+  .osk-key.hand-clicked {
+    background: linear-gradient(145deg, var(--osk-success), var(--osk-success-dark)) !important;
+    transform: scale(0.95) !important;
+  }
+  
+  .osk-close-btn.hand-hovered,
+  .osk-clear-btn.hand-hovered {
+    transform: scale(1.1) !important;
+    box-shadow: 0 0 20px rgba(33, 150, 243, 0.8) !important;
+    outline: 3px solid #fff !important;
+  }
+}
+
+/* ============================================
+   LARGE DESKTOP (1024px+)
+   ============================================ */
+@media (min-width: 1024px) {
+  .osk-container {
+    max-width: 1000px;
+  }
+  
+  .osk-key {
+    min-width: 60px;
+    height: 60px;
+    font-size: 18px;
+  }
+  
+  .osk-key-wide {
+    min-width: 90px;
+    font-size: 14px;
+  }
+  
+  .osk-key-space {
+    min-width: 400px;
+  }
+}
+
+/* ============================================
+   Accessibility
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .osk-key,
+  .osk-close-btn,
+  .osk-clear-btn {
+    transition: none !important;
+  }
+  
+  .osk-preview-cursor {
+    animation: none;
+    opacity: 1;
+  }
+  
+  .osk-key.gaze-hovered,
+  .osk-key.hand-hovered {
+    transform: none !important;
+  }
+}

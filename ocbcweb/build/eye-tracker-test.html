@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eye Tracker Test - OCBC</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e31837 0%, #ff6b6b 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      color: #e31837;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 14px;
+    }
+
+    #status {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 30px 0;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: #f5f5f5;
+      color: #666;
+    }
+
+    #status.detected {
+      background: #e8f5e9;
+      color: #4CAF50;
+    }
+
+    #status.not-detected {
+      background: #ffebee;
+      color: #f44336;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    button {
+      padding: 15px 40px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      transition: all 0.2s;
+      flex: 1;
+    }
+
+    .btn-start {
+      background: #e31837;
+      color: white;
+    }
+
+    .btn-start:hover {
+      background: #c41230;
+      transform: translateY(-2px);
+    }
+
+    .btn-stop {
+      background: #f5f5f5;
+      color: #666;
+    }
+
+    .btn-stop:hover {
+      background: #e0e0e0;
+    }
+
+    button:active {
+      transform: scale(0.95);
+    }
+
+    #info {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f5f5f5;
+      border-radius: 10px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .coordinates {
+      color: #666;
+      margin-top: 10px;
+    }
+
+    .note {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      border-radius: 5px;
+      font-size: 13px;
+      color: #856404;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 OCBC Eye Tracking Test</h1>
+    <p class="subtitle">Accessibility Feature for Stroke Patients</p>
+    
+    <div id="status">
+      Click "Start" to begin
+    </div>
+    
+    <div id="info">
+      <div id="coordinates" class="coordinates">
+        Gaze Position: Waiting...
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button class="btn-start" onclick="startTracking()">▶ Start Eye Tracking</button>
+      <button class="btn-stop" onclick="stopTracking()">⏹ Stop</button>
+    </div>
+
+    <div class="note">
+      📌 <strong>Note:</strong> Please allow camera access when prompted. The camera is only used for face detection and never records or stores video.
+    </div>
+  </div>
+
+  <script src="https://webgazer.cs.brown.edu/webgazer.js"></script>
+  <script>
+    let isTracking = false;
+    let videoStream = null; // Store the video stream
+    const statusEl = document.getElementById('status');
+    const coordEl = document.getElementById('coordinates');
+
+    async function startTracking() {
+      if (isTracking) {
+        alert('Eye tracking is already running!');
+        return;
+      }
+      
+      try {
+        statusEl.textContent = '⏳ Initializing camera...';
+        statusEl.className = '';
+        
+        await webgazer
+          .setGazeListener((data, timestamp) => {
+            if (data == null) {
+              // No face detected
+              statusEl.textContent = '❌ No Face Detected';
+              statusEl.className = 'not-detected';
+              coordEl.textContent = 'Gaze Position: Look at the camera';
+            } else {
+              // Face detected!
+              statusEl.textContent = '✅ Face Detected Successfully';
+              statusEl.className = 'detected';
+              coordEl.textContent = `Gaze Position: (${Math.round(data.x)}, ${Math.round(data.y)})`;
+            }
+          })
+          .begin();
+
+        // Show camera preview for testing
+        webgazer.showVideoPreview(true);
+        webgazer.showFaceOverlay(true);
+        webgazer.showFaceFeedbackBox(true);
+
+        // Store the video stream reference
+        const videoElement = document.getElementById('webgazerVideoFeed');
+        if (videoElement && videoElement.srcObject) {
+          videoStream = videoElement.srcObject;
+        }
+
+        isTracking = true;
+        console.log('✅ Eye tracking started successfully!');
+        
+      } catch (error) {
+        console.error('❌ Camera access error:', error);
+        statusEl.textContent = '❌ Camera Access Denied';
+        statusEl.className = 'not-detected';
+        alert('Please allow camera access in your browser settings and try again.');
+      }
+    }
+
+    function stopTracking() {
+      if (!isTracking) {
+        alert('Eye tracking is not running!');
+        return;
+      }
+
+      // End webgazer
+      webgazer.end();
+
+      // Stop all video tracks to fully release camera
+      if (videoStream) {
+        videoStream.getTracks().forEach(track => {
+          track.stop();
+          console.log('Stopped track:', track.kind);
+        });
+        videoStream = null;
+      }
+
+      // Also try to stop any video element that might still be running
+      const videoElement = document.getElementById('webgazerVideoFeed');
+      if (videoElement && videoElement.srcObject) {
+        videoElement.srcObject.getTracks().forEach(track => track.stop());
+        videoElement.srcObject = null;
+      }
+
+      isTracking = false;
+      
+      statusEl.textContent = '⏸ Tracking Stopped - Camera Released';
+      statusEl.className = '';
+      coordEl.textContent = 'Gaze Position: Stopped';
+      
+      console.log('⏹ Eye tracking stopped and camera released');
+    }
+
+    // Cleanup when page is closed
+    window.addEventListener('beforeunload', () => {
+      if (isTracking) {
+        stopTracking();
+      }
+    });
+  </script>
+</body>
+</html>
