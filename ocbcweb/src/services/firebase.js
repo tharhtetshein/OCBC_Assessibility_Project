@@ -25,7 +25,7 @@ const getSingaporeDateString = () => {
 };
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBeb1DbAZVu9AXTEgU6ooU1UhpAXMDgIrk",
+    apiKey: "",
     authDomain: "ocbcwebgrp4.firebaseapp.com",
     databaseURL: "https://ocbcwebgrp4-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "ocbcwebgrp4",
